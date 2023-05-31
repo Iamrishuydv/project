@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobi-Tech Solutions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div id="top" class="jumbotron text-center"> <!-- Add the appropriate bootstrap class -->
+        <h2 id="heading" class="text-uppercase">Mobi-Tech Solutions</h2><!-- Add the appropriate bootstrap class -->
+        <div id="socialMedia"><!-- Add the appropriate id to this div -->
+            <a href="#" class="fa fa-facebook"></a>
+            <a href="#" class="fa fa-twitter"></a>
+            <a href="#" class="fa fa-linkedin"></a>
+            <a href="#" class="fa fa-instagram"></a>
+        </div>
+    </div>
+    <!-- Fill your code for container block and results -->
+    <div id="container" class="container">
+    <div id="header" class="page-header">
+        <h3 id="subheading" class="text-center">Register for a Mobile Service</h3>
+    </div>
+            
+     </div>
+      <form id="form1" class="form-horizontal" onsubmit="return ServiceRegistration()">
+           
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <label for="customerName">Customer Name:</label>
+                </div>
+                
+                <div class="col-lg-9">
+                    <input type="text" id="customerName" class="form-control" placeholder="Enter Your Name" required>
+                </div>
+                
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <label for="contactNumber">Contact Number:</label>
+                </div>
+                
+                <div class="col-lg-9">
+                    <input type="tel" id="contactNumber" class="form-control" placeholder="Enter Your Contact Number" required>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <label for="email">E-Mail ID:</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="email" id="email" class="form-control" placeholder="Enter Your E-Mail ID" required>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <label for="dateOfPurchase">Date of Purchase:</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="date" id="dateOfPurchase" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <label for="mobileBrand">Mobile Brand:</label>
+                </div>
+                <div class="col-lg-9">
+                    <input type="text" id="mobileBrand" class="form-control" placeholder="Enter Your Mobile Brand" required list="brandNames">
+                    <datalist id="brandNames">
+                        <option value="Apple iPhone">
+                        <option value="Asus">
+                        <option value="Google Pixel">
+                        <option value="Samsung">
+                        <option value="Huawei">
+                    </datalist>
+                </div>
+            </div>
+              <div class="form-group">
+                <div>
+        <label>Service(s) Required</label>
+    </div>
+    <div>
+        <div class="checkbox-inline">
+            <input type="checkbox" id="panel" name="services" value="panel" checked>
+            <label for="panel">Back Panel Replacement</label>
+        </div>
+        <div class="checkbox-inline">
+            <input type="checkbox" id="display" name="services" value="display">
+            <label for="display">Display Replacement</label>
+        </div>
+        <div class="checkbox-inline">
+            <input type="checkbox" id="battery" name="services" value="battery">
+            <label for="battery">Battery Replacement</label>
+        </div>
+        <div class="checkbox-inline">
+            <input type="checkbox" id="motherboard" name="services" value="motherboard">
+            <label for="motherboard">MotherBoard issues</label>
+        </div>
+    </div>
+</div>
+
+     <input type="submit" id="submit" value="Register" class="btn btn-success btn-lg btn-block">  
+     
+    
+</form>
+
+ <div id="result1" class="alert alert-success">
+ 
+</div>
+
+<div id="result2" class="alert alert-info">
+ 
+</div>
+
+
+
+    
+
+    <script src="script.js"></script>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    
+</body>
+</html>
+
+------------------------------------------------------------------
+
+body {
+    /*Fill your code here*/
+    background-color: #65659d;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 14px;
+    padding-bottom: 10px;
+    
+    
+}
+h2{
+    /*Fill your code here*/
+     font-family: Tahoma;
+    font-weight: bold;
+    color: #65659d;
+    
+    
+}
+
+ 
+.fa {
+    /*Fill your code here*/
+   padding: 10px;
+  width: 50px;
+   margin: 5px 2px;
+   
+  font-size: 30px;
+  border-radius: 50%;
+  text-align: center;
+  text-decoration: none;
+    
+    
+}
+
+.fa:hover {
+    opacity: 0.7;
+}
+
+.fa-facebook {
+    background-color: #3B5998;
+    color: white;
+}
+
+.fa-twitter {
+    background-color: #55ACEE;
+    color: white;
+}
+
+
+.fa-linkedin {
+    background-color: #007bb5;
+    color: white;
+}
+
+.fa-instagram {
+    background-color: #125688;
+    color: white;
+} 
+
+       --------------------------------------------------
+
+function ServiceRegistration(){
+    // Fill your code here
+   
+    return false;
+}
+
+
+function isValidPurchaseDate(dateOfPurchase){
+    // Fill your code here
+    
+     var currentDate = new Date();
+
+return dateOfPurchase <= currentDate;
+   
+    
+    
+}
+
+function isUnderWarrantyPeriod(dateOfPurchase){
+    var today = new Date();
+    dateOfPurchase=new Date(dateOfPurchase);
+    var timeDifference=today.getTime()-dateOfPurchase.getTime();
+    var daysDifference=timeDifference/(1000*3600*24);
+    // Fill your code here
+    
+     if (daysDifference >= 0 && daysDifference <= 365) {
+    return true;
+  } else {
+    return false;
+  }
+    
+}
+
+function calculateTotalAmount(){
+    // Fill your code here
+    var serviceCharge = {
+    panel: 5,
+    display: 40,
+    battery: 20,
+    motherboard: 50
+  };
+
+  var selectedServices = document.getElementsByName("services");
+  var totalAmount = 0;
+
+  for (var i = 0; i < selectedServices.length; i++) {
+    if (selectedServices[i].checked) {
+      totalAmount += serviceCharge[selectedServices[i].value];
+    }
+  }
+
+  return totalAmount;
+
+}

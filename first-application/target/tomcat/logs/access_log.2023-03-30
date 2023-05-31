@@ -1,0 +1,4 @@
+0:0:0:0:0:0:0:1 - - [30/Mar/2023:19:41:27 +0530] "GET /first-application/servlet/webapp.LoginServlet HTTP/1.1" 404 1041 http-bio-8080-exec-1 43
+0:0:0:0:0:0:0:1 - - [30/Mar/2023:19:41:34 +0530] "GET / HTTP/1.1" 200 99 http-bio-8080-exec-4 4
+0:0:0:0:0:0:0:1 - - [30/Mar/2023:20:15:39 +0530] "GET / HTTP/1.1" 200 99 http-bio-8080-exec-7 3
+0:0:0:0:0:0:0:1 - - [30/Mar/2023:20:16:11 +0530] "GET / HTTP/1.1" 200 99 http-bio-8080-exec-9 2

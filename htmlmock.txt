@@ -1,0 +1,495 @@
+
+//index.html
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobi-Tech Solutions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <div id="top" class="jumbotron text-center">
+    <h2 id="heading" class="text-uppercase">Mobi-Tech Solutions</h2>
+    <div id="socialMedia">
+        <a href="#" class="fa fa-facebook"></a>
+        <a href="#" class="fa fa-twitter"></a>
+        <a href="#" class="fa fa-linkedin"></a>
+        <a href="#" class="fa fa-instagram"></a>
+    </div>
+</div>
+
+
+    <div id="container" class="container">
+        <div id="header" class="page-header">
+            <h3 id="subheading">Register for a Mobile Service</h3>
+        </div>
+
+        <form id="form1" onsubmit="return ServiceRegistration()" class="form-horizontal">
+            <div class="form-group row">
+                <div class="col-lg-3 col-md-12">
+                    <label for="customerName">Customer Name</label>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <input type="text" id="customerName" class="form-control" placeholder="Enter Your Name" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-3 col-md-12">
+                    <label for="contactNumber">Contact Number</label>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <input type="tel" id="contactNumber" class="form-control" placeholder="Enter Your Contact Number" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-3 col-md-12">
+                    <label for="email">E-Mail ID</label>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <input type="email" id="email" class="form-control" placeholder="Enter Your E-Mail ID" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-3 col-md-12">
+                    <label for="dateOfPurchase">Date of Purchase</label>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <input type="date" id="dateOfPurchase" class="form-control" required>
+                </div>
+            </div>
+
+           <div class="form-group row">
+  <div class="col-lg-3 col-md-12">
+    <label for="mobileBrand">Mobile Brand</label>
+  </div>
+  <div class="col-lg-9 col-md-12">
+    <input type="text" id="mobileBrand" class="form-control" placeholder="Enter Your Mobile Brand" required list="brandNames">
+    <datalist id="brandNames">
+      <option value="Apple IPhone">
+      <option value="Asus">
+      <option value="Google Pixel">
+      <option value="Samsung">
+      <option value="Huawei">
+    </datalist>
+  </div>
+</div>
+
+              
+                        <div class="form-group row">
+            <div class="col-lg-3 col-md-12">
+                <label>Service(s) Required</label>
+            </div>
+            <div class="col-lg-9 col-md-12">
+                <div class="checkbox-inline">
+                    <input type="checkbox" name="services" id="panel" value="panel" checked>
+                    <label for="panel">Back Panel Replacement</label>
+                </div>
+                <div class="checkbox-inline">
+                    <input type="checkbox" name="services" id="display" value="display">
+                    <label for="display">Display Replacement</label>
+                </div>
+                <div class="checkbox-inline">
+                    <input type="checkbox" name="services" id="battery" value="battery">
+                    <label for="battery">Battery Replacement</label>
+                </div>
+                <div class="checkbox-inline">
+                    <input type="checkbox" name="services" id="motherboard" value="motherboard">
+                    <label for="motherboard">MotherBoard issues</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-lg-9 offset-lg-3 col-md-12">
+                <input id = "submit" type="submit" class="btn btn-success btn-lg btn-block" value="Register">
+            </div>
+        </div>
+   
+        </form>
+    <div id="result1" class="alert alert-success"></div>
+    <div id="result2" class="alert alert-info"></div>
+</div>
+
+
+<script src="script.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+
+//style.css
+
+body {
+  background-color: #65659d;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-size: 14px;
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: #65659d;
+}
+
+.fa {
+  padding: 10px;
+  width: 50px;
+  margin-top:  5px;
+   margin-bottom:  5px;
+  margin-right: 2px;
+  margin-left: 2px;
+  font-size: 30px;
+  border-radius: 50%;
+  text-align: center;
+  text-decoration: none;
+}
+
+#top {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+#heading {
+  text-transform: uppercase;
+}
+
+#socialMedia a {
+  color: #65659d;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#header {
+  margin-top: 20px;
+}
+
+#subheading {
+  margin-bottom: 20px;
+}
+
+#form1 .form-group {
+  margin-bottom: 20px;
+}
+
+#result1,
+#result2 {
+  display: none;
+  margin-top: 20px;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+
+//script.js
+
+function ServiceRegistration() {
+  var customerName = document.getElementById('customerName').value;
+  var contactNumber = document.getElementById('contactNumber').value;
+  var email = document.getElementById('email').value;
+  var dateOfPurchase = document.getElementById('dateOfPurchase').value;
+  var mobileBrand = document.getElementById('mobileBrand').value;
+
+  var result1 = document.getElementById('result1');
+  var result2 = document.getElementById('result2');
+
+  if (!isValidPurchaseDate(dateOfPurchase)) {
+    result1.innerHTML = 'Please select a valid date of purchase.';
+    result1.style.display = 'block';
+    result2.style.display = 'none';
+    return false;
+  }
+
+  result1.innerHTML = 'Dear ' + customerName + ', your ' + mobileBrand + ' mobile service request has been registered.';
+  result1.style.display = 'block';
+
+  if (isUnderWarrantyPeriod(dateOfPurchase)) {
+    result2.innerHTML = 'Since your mobile is under warranty period, the payment will be based on the claim eligibility.';
+  } else {
+    var totalAmount = calculateTotalAmount();
+    result2.innerHTML = 'Since your mobile is not under warranty period, you need to pay $' + totalAmount + ' for the service.';
+  }
+  result2.style.display = 'block';
+
+  return false;
+}
+
+function isValidPurchaseDate(dateOfPurchase) {
+  var today = new Date();
+  dateOfPurchase = new Date(dateOfPurchase);
+
+  if (dateOfPurchase <= today) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isUnderWarrantyPeriod(dateOfPurchase) {
+  var today = new Date();
+  dateOfPurchase = new Date(dateOfPurchase);
+  var timeDifference = today.getTime() - dateOfPurchase.getTime();
+  var daysDifference = timeDifference / (1000 * 3600 * 24);
+
+  if (daysDifference >= 0 && daysDifference <= 365) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function calculateTotalAmount() {
+  var services = document.getElementsByName('services');
+  var totalAmount = 0;
+
+  for (var i = 0; i < services.length; i++) {
+    if (services[i].checked) {
+      switch (services[i].value) {
+        case 'panel':
+          totalAmount += 5;
+          break;
+        case 'display':
+          totalAmount += 40;
+          break;
+        case 'battery':
+          totalAmount += 20;
+          break;
+        case 'motherboard':
+          totalAmount += 50;
+          break;
+      }
+    }
+  }
+
+  return totalAmount;
+}
+
+
+///Ajax----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    table.report-table {
+        margin: auto;
+        padding: 2px;
+        border-collapse: collapse;
+    }
+    table.report-table th,
+    table.report-table td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #ccc;
+    }
+    h2 {
+        text-align: center;
+    }
+    #msg {
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+<h2>User Details</h2>
+<input type="button" id="btn" value="Get Data From API" onclick="loadDoc()">
+<div id="msg"></div><br>
+<form>
+    <table>
+        <tr>
+            <td>Get Report based on</td>
+            <td>
+                <select id="searchBy" onchange="show()">
+                    <option value="-select-">-select-</option>
+                    <option value="City">City</option>
+                    <option value="Gender">Gender</option>
+                    <option value="CityAndGender">City And Gender</option>
+                </select>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td>Select City</td>
+            <td>
+                <select id="criteria1" disabled="true">
+                    <option value="-select-">-select-</option>
+                    <option value="California">California</option>
+                    <option value="New York">New York</option>
+                    <option value="Texas">Texas</option>
+                    <option value="Washington">Washington</option>
+                    <option value="Florida">Florida</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Select Gender</td>
+            <td>
+                <select id="criteria2" disabled="true">
+                    <option value="-select-">-select-</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><input type="button" id="report" value="Display Report" onclick="displayReport()"></td>
+        </tr>
+    </table>
+</form>
+<div id="result"></div>
+
+<script>
+    function show() {
+        if (document.getElementById("searchBy").value == "City") {
+            document.getElementById("criteria1").disabled = false;
+            document.getElementById("criteria2").disabled = true;
+        } else if (document.getElementById("searchBy").value == "Gender") {
+            document.getElementById("criteria1").disabled = true;
+            document.getElementById("criteria2").disabled = false;
+        } else {
+            document.getElementById("criteria1").disabled = false;
+            document.getElementById("criteria2").disabled = false;
+        }
+    }
+
+    var user = [];
+
+    function loadDoc() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                handleResponse(this.responseText);
+                document.getElementById("msg").innerHTML = "Data retrieved successfully";
+            }
+        };
+        xhttp.open("GET", "https://webapps.tekstac.com/WebAPI/UserDataServlet", true);
+        xhttp.send();
+    }
+
+  function handleResponse(responseText) {
+    var parser = new DOMParser();
+   var xmlDoc = parser.parseFromString(responseText, "application/xml");
+    var users = xmlDoc.getElementsByTagName("UserData");
+
+    for (var i = 0; i < users.length; i++) {
+        var name = users[i].getElementsByTagName("Name")[0].textContent;
+        var gender = users[i].getElementsByTagName("Gender")[0].textContent;
+        var dob = users[i].getElementsByTagName("Dob")[0].textContent;
+        var city = users[i].getElementsByTagName("City")[0].textContent;
+       user.push({ Name: name.trim(), Gender: gender.trim(), Dob: dob.trim(), City: city.trim() });
+
+    }
+}
+
+
+function getReport() {
+    var searchBy = document.getElementById("searchBy").value;
+    var criteria1 = document.getElementById("criteria1").value;
+    var criteria2 = document.getElementById("criteria2").value;
+    var result = [];
+
+    if (searchBy === "City") {
+        for (var i = 0; i < user.length; i++) {
+            if (user[i].City === criteria1) {
+                result.push(user[i]);
+            }
+        }
+    } else if (searchBy === "Gender") {
+        for (var i = 0; i < user.length; i++) {
+            if (user[i].Gender === criteria2) {
+                result.push(user[i]);
+            }
+        }
+    } else if (searchBy === "CityAndGender") {
+        for (var i = 0; i < user.length; i++) {
+            if (user[i].City === criteria1 && user[i].Gender === criteria2) {
+                result.push(user[i]);
+            }
+        }
+    }
+
+    return result;
+}
+
+
+function displayReport() {
+    var reportData = getReport();
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
+
+  if (reportData.length === 0 || (searchBy !== "CityAndGender" && reportData.length === user.length)) {
+        resultDiv.innerHTML = "No data found for the selected criteria.";
+        return;
+    }
+
+    var table = document.createElement("table");
+table.setAttribute("class", "report-table");
+    table.style.marginLeft = "auto";
+    table.style.marginRight = "auto";
+    table.style.padding = "2px";
+
+    var headerRow = document.createElement("tr");
+    var nameHeader = document.createElement("th");
+    var genderHeader = document.createElement("th");
+    var dobHeader = document.createElement("th");
+    var cityHeader = document.createElement("th");
+
+    nameHeader.textContent = "Name";
+    genderHeader.textContent = "Gender";
+    dobHeader.textContent = "DOB";
+    cityHeader.textContent = "City";
+
+    headerRow.appendChild(nameHeader);
+    headerRow.appendChild(genderHeader);
+    headerRow.appendChild(dobHeader);
+    headerRow.appendChild(cityHeader);
+    table.appendChild(headerRow);
+
+    for (var i = 0; i < reportData.length; i++) {
+        var dataRow = document.createElement("tr");
+        var nameCell = document.createElement("td");
+        var genderCell = document.createElement("td");
+        var dobCell = document.createElement("td");
+        var cityCell = document.createElement("td");
+
+        nameCell.textContent = reportData[i].Name;
+        genderCell.textContent = reportData[i].Gender;
+        dobCell.textContent = reportData[i].Dob;
+        cityCell.textContent = reportData[i].City;
+
+        dataRow.appendChild(nameCell);
+        dataRow.appendChild(genderCell);
+        dataRow.appendChild(dobCell);
+        dataRow.appendChild(cityCell);
+        table.appendChild(dataRow);
+    }
+
+    resultDiv.appendChild(table);
+}
+</script>
+</body>
+</html>

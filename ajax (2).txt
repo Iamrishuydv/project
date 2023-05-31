@@ -1,0 +1,144 @@
+<html>
+<head>
+    <style>
+        table{
+            margin-left:auto;
+            margin-right:auto;
+            padding :2px;
+        }
+        h2{
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Credit Card Details</h2>
+    <input type="button" id="btn" value="Get Data From API" onclick="loadDoc()">
+    <div id="msg"></div><br>
+    <table>
+        <tr><td>Get Report based on</td>
+            <td>
+                <select id="searchBy" onchange="show()">
+                    <option value="-select-" >-select-</option>
+                    <option value="CardType" >CardType</option>
+                    <option value="Expired Cards">Expired Cards</option>
+                </select><br>
+            </td>
+        </tr>
+        <tr>
+            <td>Select Card Type</td>
+            <td>
+                <select id="criteria" disabled=true>
+                    <option value="-select-" >-select-</option>
+                    <option value="Visa" >Visa</option>
+                    <option value="Master">Master</option>
+                    <option value="Rupay">Rupay</option>
+                    <option value="Mastro">Mastro</option>
+                </select>
+            </td>
+        </tr>
+        <tr><td><input type="button" id="report" value="Display Report" onclick="displayReport()"> </td></tr>
+    </table>
+    <div id=result></div>
+    <script>
+        function show()
+        {
+            if(document.getElementById("searchBy").value=="CardType")
+            document.getElementById("criteria").disabled=false;
+            else document.getElementById("criteria").disabled=true;
+        }
+        var card=[];
+        
+        function loadDoc() 
+        {
+            var xhttp=new XMLHttpRequest(); // XMLHttpRequest object created
+            xhttp.onreadystatechange = function(){
+                if(this.readyState === 4 && this.status === 200){
+                    handleResponse(this.responseText);
+                    document.getElementById("msg").innerHTML="Data retrieved successfully";
+                }
+            }
+            // Open the request object (by specifying the Web API call using GET method and by specifying the given URL as parameters)
+            // On onreadystatechange (an event triggered when readyState changes from 0 to 4 on server request), invoke handleResponse(xhttp)
+            xhttp.open("GET", "https://webapps.tekstac.com/WebAPI/CreditCardsXMLServlet", true);
+            xhttp.send();
+        }
+        
+        function handleResponse(obj)
+        {	
+        	// Check for the ready state and status code (when readyState is 4 and status is 200, it means the response is ready)
+        	var par = new DOMParser();
+        	var xmlDocs = par.parseFromString(obj, "application/xml");
+        	var cards = xmlDocs.getElementsByTagName("CreditCard");
+        	
+        	for(var i = 0; i<cards.length; i++){
+        	    var cardName = cards[i].getElementsByTagName("CardHolderName")[0].textContent;
+        	    var cardType = cards[i].getElementsByTagName("CardType")[0].textContent;
+        	    var cardLimit = cards[i].getElementsByTagName("CardLimit")[0].textContent;
+        	    var expiryDate = cards[i].getElementsByTagName("ExpiryDate")[0].textContent;
+        	    
+        	    card.push({ cardName: cardName.trim(), cardType: cardType.trim(), cardLimit: cardLimit.trim(), expiryDate: expiryDate.trim() });
+        	}
+        	
+        	// Retrieve the data from XML - create an object  - store the object into the array : card
+        }
+        
+        function getReport()
+        {
+            // Search the credit card objects based on the given searchBy option and criteria
+            // Store the retrived objects into a new array and return this new array
+            
+            var arr = [];
+            var searchBy = document.getElementById("searchBy").value;
+            var criteria = document.getElementById("criteria").value;
+            
+            if (searchBy == "CardType") {
+                for (var i = 0; i < card.length; i++) {
+                    if (card[i].cardType == criteria) {
+                        arr.push(card[i]);
+                    }
+                }
+            } else if (searchBy == "Expired Cards") {
+                var now = new Date();
+                for (var i = 0; i < card.length; i++) {
+                    var expiry = new Date(card[i].expiryDate);
+                    if (expiry < now) {
+                        arr.push(card[i]);
+                    }
+                }
+            }
+            
+            return arr;
+
+        }
+        
+        function displayReport()
+        {
+            // Invoke getReport() method and receive the array returned
+            // Display the details from the array in a tabular format
+            
+            
+          var searchBy = document.getElementById("searchBy").value;
+          var criteria = document.getElementById("criteria").value;
+          var reportTable = "<table><tr><th>Card Holder Name</th><th>Card Type</th><th>Card Limit</th><th>Expiry Date</th></tr>";
+          var reportCards = getReport();
+         
+          if (reportCards.length > 0) {
+            for (var i = 0; i < reportCards.length; i++) {
+              var card = reportCards[i];
+              reportTable += "<tr><td>" + card.cardName + "</td><td>" + card.cardType + "</td><td>" + card.cardLimit + "</td><td>" + card.expiryDate + "</td></tr>";
+            }
+          } else {
+            reportTable += "<tr><td colspan='4'>No data to display</td></tr>";
+          }
+          
+          reportTable += "</table>";
+          document.getElementById("result").innerHTML = reportTable;
+
+            
+        }
+    </script>
+</body>
+</html>
+
+

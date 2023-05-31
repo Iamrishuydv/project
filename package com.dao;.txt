@@ -1,0 +1,138 @@
+package com.dao;
+
+import java.util.*;
+import org.springframework.stereotype.Component;
+import com.repository.AccountRepository;
+import com.repository.TransactionRepository;
+import com.entities.BankTransaction;
+import com.exception.InvalidBankTransactionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.entities.*;
+@Component
+public class TransactionDAOImpl implements ITransactionDAO {
+	
+	//Provide code to Inject TransactionRepository and AccountRepository
+	//Provide code to Inject AccountRepository, if needed
+	@Autowired
+	TransactionRepository transactionRepository ;
+	@Autowired
+	AccountRepository accountRepository;
+	
+	@Override
+	public BankTransaction insertTransaction(BankTransaction transactionObj,String accountNumber) throws InvalidBankTransactionException{
+		BankTransaction bank=null;
+		Optional<Account> account=accountRepository.findById(accountNumber);
+		if(!account.isPresent()){
+		    throw new InvalidBankTransactionException("invalid Account");
+		}
+		if(transactionObj.getTransactionType().equals("Deposit")){
+		    double balance=account.orElse(null).getBalanceAmount();
+		    balance=balance+transactionObj.getAmount();
+		    account.orElse(null).setBalanceAmount(balance);
+		    accountRepository.save(account.orElse(null));
+		   bank= transactionRepository.save(transactionObj);
+		}
+		if(transactionObj.getTransactionType().equals("Withdraw")){
+		    double balance=account.orElse(null).getBalanceAmount();
+		    balance=balance-transactionObj.getAmount();
+		    account.orElse(null).setBalanceAmount(balance);
+		    accountRepository.save(account.orElse(null));
+		   bank= transactionRepository.save(transactionObj);
+		}
+		
+		return bank;
+	}
+	
+	@Override
+	public List<BankTransaction> viewTransactionByAccountNumber(String accountNumber) throws InvalidBankTransactionException
+	{
+		Optional<Account> account=accountRepository.findById(accountNumber);
+		if(!account.isPresent()){
+		    throw new InvalidBankTransactionException("invalid Account");
+		}
+		
+		return transactionRepository.findByAccountObjAccountNumber(accountNumber);	
+	}
+	
+	@Override
+	public List<BankTransaction> viewTransactionByTransactionType(String transactionType)
+	{
+		//fill code
+		
+		return transactionRepository.findByTransactionType(transactionType);	
+	}
+	
+	@Override
+	public List<BankTransaction> viewTransactionByTransactionTypeAndAmount(String transactionType,double amount)
+	{
+		//fill code
+		
+		return transactionRepository.findByTransactionTypeAndAmountGreaterThanEqual(transactionType,amount);	
+	}
+
+}
+
+
+//////////////
+package com.dao;
+
+import java.util.List;
+import org.springframework.stereotype.Component;
+import com.repository.AccountRepository;
+import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
+import com.entities.Account;
+import com.exception.InvalidAccountException;
+
+@Component
+public class AccountDAOImpl implements IAccountDAO{
+	
+	//Provide code to Inject 
+	@Autowired
+	AccountRepository accountRepository;
+	
+	
+	@Override
+	public Account openAccount(Account account) {
+		
+		//fill code
+		
+		return accountRepository.save(account);
+	}
+	
+	@Override
+	public Account updateAccountHolderPhoneNumber(String accountNumber,String phoneNumber) throws InvalidAccountException {
+		Optional<Account> account=accountRepository.findById(accountNumber);
+		if(!account.isPresent()){
+		    throw new InvalidAccountException("invalid Account");
+		}
+		account.orElse(null).setPhoneNumber(phoneNumber);
+		return accountRepository.save(account.orElse(null));
+		
+// 		return null;
+	}
+	
+	@Override
+	public Account viewAccountByAccountNumber(String accountNumber) throws InvalidAccountException {
+		
+		Optional<Account> account=accountRepository.findById(accountNumber);
+		if(!account.isPresent()){
+		    throw new InvalidAccountException("invalid Account");
+		}
+		return account.orElse(null);	
+	}
+
+	@Override
+	public List<Account> viewAccountByBalance(double balance) {
+		
+		
+		
+		return accountRepository.findByBalanceAmountGreaterThanEqual(balance);
+// return null;
+	}
+
+}
+
+//////////////////////////

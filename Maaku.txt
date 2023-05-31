@@ -1,0 +1,348 @@
+---------------RestaurantRegistryApplication-----------------
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+
+@SpringBootApplication
+@EnableEurekaServer
+public class RestaurantRegistryApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantRegistryApplication.class, args);
+	}
+
+}
+
+-------------RestaurantRegistryApplication.approp------------------
+server.port = 8761
+eureka.client.registerWithEureka=false
+eureka.client.fetchRegistry=false
+
+------------------------RestaurantRouterApplication-------------------
+package com.example.demo;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@SpringBootApplication
+@EnableDiscoveryClient
+public class RestaurantRouterApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantRouterApplication.class, args);
+	}
+
+}
+
+---------------RestaurantRouterApplication.appropp---------------------
+server.port=8777
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+spring.application.name=gateway
+management.endpoints.web.exposure.include=*
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId=true
+spring.cloud.gateway.routes.id=restaurantapp
+spring.cloud.gateway.routes.uri=lb://localhost:9090
+spring.cloud.gateway.routes.predicates.Path=/**
+spring.cloud.gateway.globalcors.cors.corsConfigurations=[/**]
+spring.cloud.gateway.globalcors.cors.corsConfigurations.allowedOrigins=*
+spring.cloud.gateway.globalcors.cors.corsConfigurations.allowedMethods=*
+
+-------------------RestaurantServiceApplication----------------------
+package com.restaurant.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages="com.restaurant")
+@EnableDiscoveryClient
+public class RestaurantServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantServiceApplication.class, args);
+	}
+
+}
+
+------------------RestaurantController---------------------------
+
+package com.restaurant.controller;
+
+
+import java.time.*;
+import java.util.List;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.*;
+import com.restaurant.exception.BookTableInvalidException;
+import com.restaurant.model.BookTable;
+import com.restaurant.service.RestaurantServiceImpl;
+@RestController
+public class RestaurantController {
+	
+	@Autowired
+	RestaurantServiceImpl service;
+	
+	@PostMapping("/book")
+	public BookTable bookATable(@RequestBody BookTable bookObj) throws BookTableInvalidException {
+		return service.bookATable(bookObj);
+	}
+
+	
+	@PutMapping("/calculate/{bookingId}")
+	public BookTable calculateBill(@PathVariable String bookingId){
+
+		return service.calculateBill(bookingId);
+	}
+	
+	@GetMapping("/viewBooking/{dateRequired}")
+	public List<BookTable> viewBookingOnAParticularDate(@PathVariable String dateRequired) throws BookTableInvalidException {
+	    LocalDate date = LocalDate.parse(dateRequired);
+		return service.viewBookingOnAParticularDate(date);
+		
+	}
+	
+
+	@GetMapping("/starRated")
+	public List<String> findStarRatedCustomer(){
+
+		return service.findStarRatedCustomer();
+	}
+
+	
+
+
+}
+
+------------------------RestaurantServiceImpl------------------------
+
+package com.restaurant.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.*;
+import java.util.Map.Entry;
+import org.slf4j.*;
+
+import org.springframework.stereotype.Service;
+import com.restaurant.exception.BookTableInvalidException;
+import com.restaurant.model.BookTable;
+
+
+@Service
+public class RestaurantServiceImpl implements IRestaurantService {
+	
+    Logger logger = LoggerFactory.getLogger(RestaurantServiceImpl.class);
+	private static List<BookTable> bookList=new ArrayList<BookTable>();
+	
+	public static List<BookTable> getBookList() {
+		return bookList;
+	}
+
+	public static void setBookList(List<BookTable> bookList) {
+		RestaurantServiceImpl.bookList = bookList;
+	}
+	
+	public RestaurantServiceImpl()
+	{
+	
+	}
+
+	@Override
+	public BookTable bookATable(BookTable obj) throws BookTableInvalidException {
+		
+		if(obj.getMobileNumber().matches("^[6-9]{1}[0-9]{9}$")){
+		    bookList.add(obj);
+		    logger.info("Customer with id "+obj.getBookingId()+" booked successfully");
+		    return obj;
+		}
+		
+		logger.error("Enter a valid mobile number");
+		throw new BookTableInvalidException("Enter a valid mobile number");
+	}
+
+	@Override
+	public BookTable calculateBill(String bookingId) {
+		
+		for(BookTable booking:bookList){
+		    if(booking.getBookingId().equals(bookingId)){
+		        Double a = (Double) (booking.getTotalAdultVegCount()*599.0);
+		        Double b = (Double) (booking.getTotalAdultNonVegCount()*699.0);
+		        Double c = (Double) (booking.getTotalKidsVegCount()*249.0);
+		        Double d = (Double) (booking.getTotalKidsNonVegCount()*349.0);
+		        
+		        Double total = a+b+c+d;
+		        booking.setTotalBillAmount(total);
+		        logger.info("Transaction completed successfully");
+		        return booking;
+		    }
+		}
+		return null;
+	}
+
+	@Override
+	public List<BookTable> viewBookingOnAParticularDate(LocalDate dateRequired) throws BookTableInvalidException {
+		// TODO Auto-generated method stub
+		List<BookTable> bookings = new ArrayList<>();
+		for(BookTable booking:bookList){
+		    if(booking.getBookingDate().equals(dateRequired)){
+		        bookings.add(booking);
+		    }
+		}
+		
+		if(bookings.size()==0){
+		    logger.info("View booking on a particular date is successfully done");
+		}else{
+		    logger.error("No bookings available on the given date");
+		    throw new BookTableInvalidException("No bookings available on the given date");
+		}
+		return bookings;
+	}
+
+	@Override
+	public List<String> findStarRatedCustomer() {
+		List<String> star = new ArrayList<>();
+		HashMap<String,Integer> map = new HashMap<>();
+		for(BookTable booking:bookList){
+		    String mobno= booking.getMobileNumber();
+		    map.put(mobno,map.getOrDefault(mobno,0)+1);
+		}
+		
+		int maxCount=0;
+		for(int m:map.values()){
+		    maxCount=Math.max(m,maxCount);
+		}
+		for(Entry<String,Integer> entry:map.entrySet()){
+		    if(entry.getValue()==maxCount){
+		        star.add(entry.getKey());
+		    }
+		}
+		logger.info("Find star rated customer is successful");
+		return star;
+	}
+
+}
+
+-------------------------RestaurantServiceImpl.appprop--------------------
+server.port=9090
+logging.config=src/main/resources/logger.xml
+spring.application.name=restaurantapp
+
+-------------------------RestaurantApplication----------------------------
+package com.restaurant.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.netflix.ribbon.*;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages="com.restaurant")
+@EnableFeignClients(basePackages="com.restaurant")
+@RibbonClients({@RibbonClient(name="greet")})
+public class RestaurantApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantApplication.class, args);
+	}
+
+}
+
+----------------------------ApplicationController-------------------------
+
+package com.restaurant.controller;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.restaurant.proxy.*;
+
+@RestController
+@RibbonClient(name="greet")
+public class ApplicationController {
+
+	@Autowired
+	ServiceProxy proxy;
+	
+	@GetMapping("/greet")
+	@CircuitBreaker(name="breaker",fallbackMethod="fallback")
+	public String retreiveInfo( ) {
+		
+		return proxy.greeting();
+		
+	}
+	
+	public String fallback(Exception e) {
+		return "Sorry Service is unavailable";
+	}
+	
+}
+
+---------------------ServiceProxy----------------------
+package com.restaurant.proxy;
+
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.cloud.openfeign.FeignClient;
+
+@FeignClient(name="greet", url="http://localhost:8091")
+public interface ServiceProxy {
+	
+	    @GetMapping("/welcome")
+	   public String greeting();
+}
+
+-----------------------ServiceProxy.approp--------------------------
+server.port=8090
+restaurantapp.ribbon.listOfServers=localhost:9090
+
+
+--------------------RestaurantGreetingApplication----------------------
+package com.restaurant.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages= {"com.restaurant.controller"})
+
+public class RestaurantGreetingApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantGreetingApplication.class, args);
+	}
+
+}
+
+
+---------------------------GreetingController-----------------------
+
+package com.restaurant.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class GreetingController {
+
+	
+	@GetMapping(value="/welcome")
+	public @ResponseBody String greeting( ) {
+		
+		return "Welcome to our restaurant,We offer wide varieties of delicious food items.Spread over an area of 2,600 sq ft, restaurant has a seating capacity of 110.";
+		
+	}
+}
+
+-------------------------------
+

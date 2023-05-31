@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:p="http://www.springframework.org/schema/p"
+xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						https://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/util
+						http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+
+
+
+<bean class="com.springcore.Collections.Location"
+	name="location">
+<property name="locationcode">
+<value>123</value>
+</property>
+<property name="locationname">
+<value>Airoli</value>
+</property>
+<property name="batch">
+<list>
+<value>BGL13AJ001</value>
+<value>BGL13DN002</value>
+<value>BGL13DW003</value>
+</list>
+</property>
+</bean>
+
+<bean  class="com.springcore.Collections.Batch" name="batch1">
+<property name="id">
+<value>2022</value>
+</property>
+<property name="domain">
+<value>Java</value>
+</property>
+<property name="code">
+<value>H2O</value>
+</property>
+</bean>
+
+
+</beans>

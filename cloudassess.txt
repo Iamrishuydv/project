@@ -1,0 +1,405 @@
+  -----------------------recruitmentregistry--------------------------------
+
+
+package com.recruitment.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+
+@SpringBootApplication
+@EnableEurekaServer
+public class RecruitmentRegistryApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RecruitmentRegistryApplication.class, args);
+	}
+
+}
+
+
+--------------------------------------recruitment registry application properties-------------------------
+server.port = 8761
+eureka.client.registerWithEureka=false
+eureka.client.fetchRegistry=false
+
+------------------recruitment router------------------------
+
+package com.recruitment.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@SpringBootApplication
+@EnableDiscoveryClient
+public class RecruitmentRouterApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RecruitmentRouterApplication.class, args);
+	}
+
+}
+
+
+--------------------------recruitment router application.prop-----------------------------------------------
+server.port=8777
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+spring.application.name=gateway
+management.endpoints.web.exposure.include=*
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId=true
+spring.cloud.gateway.routes.id=restaurantapp
+spring.cloud.gateway.routes.uri=lb://localhost:9090
+spring.cloud.gateway.routes.predicates.Path=/**
+spring.cloud.gateway.globalcors.cors.corsConfigurations=[/**]
+spring.cloud.gateway.globalcors.cors.corsConfigurations.allowedOrigins=*
+spring.cloud.gateway.globalcors.cors.corsConfigurations.allowedMethods=*
+
+-------------------recruitment agency----------------------
+package com.recruitment.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages="com.recruitment")
+@EnableDiscoveryClient
+public class RecruitmentAgencyApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RecruitmentAgencyApplication.class, args);
+	}
+
+}
+
+---------------------------recruitment controller------------------------------------------
+package com.recruitment.controller;
+
+import java.util.List;
+import java.util.Map;
+import org.springframework.web.bind.annotation.*;
+import com.recruitment.exception.*;
+import org.springframework.beans.factory.annotation.*;
+import com.recruitment.validation.*;
+
+import com.recruitment.service.*;
+import com.recruitment.model.Candidate;
+
+@RestController
+public class RecruitmentController {
+	
+	@Autowired
+	RecruitmentServiceImpl service;
+	
+	@Autowired
+	RecruitmentValidator validator;
+	
+	@PostMapping("/register")
+	public Candidate registerCandidate(@RequestBody Candidate candidate) throws CandidateAlreadyExistsException {
+		
+		return service.registerCandidate(candidate);
+	}
+	@GetMapping("/view")
+	public Map<String,List<Candidate>> viewCandidateBasedonPosition(){
+		return service.viewCandidateBasedonPosition();
+		
+	}
+	@GetMapping("/filter/{yearsOfExperience}")
+	public List<Candidate> filterCandidate(@PathVariable int yearsOfExperience){
+		return service.filterCandidate(yearsOfExperience);
+		
+	}
+	@DeleteMapping("/remove")
+	public int removeCandidate() {
+		return service.removeCandidate();
+	}
+
+}
+
+--------------------------------------exception-------------------------------------
+
+package com.recruitment.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class CandidateAlreadyExistsException extends Exception{
+
+	public CandidateAlreadyExistsException(String msg)
+	{
+	    super(msg);
+	}
+	
+
+}
+-------------------------------candidate-----------------------------------
+package com.recruitment.model;
+import lombok.*;
+
+@Data
+public class Candidate {
+	
+	
+	private String candidateId;
+	private String candidateName;	
+	private String mobileNumber;
+	private String emailId;
+	private String positionAppliedFor;
+	private Integer yearsOfExperience;
+	private double expectedSalary;
+	
+	private String Status;
+
+
+
+
+
+
+
+
+
+	public Candidate() {
+		
+	}
+
+	public Candidate(String candidateId, String candidateName, String mobileNumber, String emailId,
+			String positionAppliedFor, Integer yearsOfExperience, double expectedSalary, String status) {
+		super();
+		this.candidateId = candidateId;
+		this.candidateName = candidateName;
+		this.mobileNumber = mobileNumber;
+		this.emailId = emailId;
+		this.positionAppliedFor = positionAppliedFor;
+		this.yearsOfExperience = yearsOfExperience;
+		this.expectedSalary = expectedSalary;
+		Status = status;
+	}
+
+}
+
+----------------------------recruitment service impl --------------------------
+package com.recruitment.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.recruitment.exception.CandidateAlreadyExistsException;
+import com.recruitment.model.Candidate;
+import org.springframework.stereotype.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Service
+public class RecruitmentServiceImpl implements IRecruitmentService {
+
+    Logger logger = LoggerFactory.getLogger(RecruitmentServiceImpl.class);
+	private static List<Candidate> candidateList=new ArrayList<Candidate>();
+	
+	/*
+	 * This method should add the candidate object to the candidateList, before adding it shoulkd check
+	 * whether the email id of the candidate is already available, if available throw an exception
+	 * else add the candidate object into the list
+	 */
+	public Candidate registerCandidate(Candidate candidate) throws CandidateAlreadyExistsException {
+		// TODO Auto-generated method stub
+		if(candidate.getEmailId()!=null)
+		{
+		    candidateList.add(candidate);
+		    String id = candidate.getCandidateId();
+		    logger.info("Candidate with id "+id+" registered successfully");
+		    return candidate;
+		}
+		else
+		{
+		    logger.error("Candidate already exists with us");
+		    throw new CandidateAlreadyExistsException("Candidate already exists with us");
+		}
+	
+	}
+
+	/*
+	 * This method should return the Map as position applied for as a key and list of candidates who applied for that position as value.
+	 */
+	public Map<String, List<Candidate>> viewCandidateBasedonPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * This method should accept the years of experience as input and it should  
+	 *  iterate the candidateList and return the list of candidates who have that experience.
+	 */
+	public List<Candidate> filterCandidate(int yearsOfExperience) {
+		// TODO Auto-generated method stub
+		List<Candidate> list = new ArrayList<Candidate>();
+		for (Candidate candid : candidateList)
+		{
+		    if(candid.getYearsOfExperience()==yearsOfExperience)
+		    {
+		        list.add(candid);
+                logger.info("View candidate based on the experience is successfully done");
+		    }
+		}
+		return list;
+	}
+
+	
+	/*
+	 * This method should remove the candidate based on the status. 
+	 * If the status is recruited then remove all those candidates.
+	 * This method should return the number of candidates removed.
+	 */
+	public int removeCandidate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	
+public static List<Candidate> getCandidateList() {
+		return candidateList;
+	}
+
+	public static void setCandidateList(List<Candidate> candidateList) {
+		RecruitmentServiceImpl.candidateList = candidateList;
+	}
+
+	
+}
+
+---------------------------recruitment validator------------------------------------------
+package com.recruitment.validation;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.beanvalidation.CustomValidatorBean;
+
+import com.recruitment.model.Candidate;
+import org.springframework.stereotype.*;
+
+@Component
+public class RecruitmentValidator extends CustomValidatorBean {
+
+	@Override
+    public boolean supports(Class<?> clazz) {
+    return Candidate.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+          super.validate(target, errors);
+    
+    	  
+        } 
+}
+
+---------------------------recruitment application----------------------------------------------
+package com.recruitment.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.netflix.ribbon.*;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages="com.recruitment")
+@EnableFeignClients(basePackages="com.recruitment")
+@RibbonClients({@RibbonClient(name="greet")})
+public class RecruitmentApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RecruitmentApplication.class, args);
+	}
+
+}
+
+-----------------------------------------application controller------------------------------
+package com.recruitment.controller;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.recruitment.proxy.*;
+
+@RestController
+@RibbonClient(name="greet")
+public class ApplicationController {
+
+	@Autowired
+	ServiceProxy proxy;
+	
+	@GetMapping("/greet")
+	@CircuitBreaker(name="breaker",fallbackMethod="fallback")
+	public String retreiveInfo( ) {
+		
+		return proxy.greeting();
+		
+	}
+	
+	public String fallback(Exception e) {
+		return "Sorry Service is unavailable";
+	}
+	
+}
+------------------------------------service proxy-------------------------------------------
+package com.recruitment.proxy;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.cloud.openfeign.FeignClient;
+
+@FeignClient(name="greet", url="http://localhost:8091")
+
+public interface ServiceProxy {
+	    @GetMapping("/welcome")
+	   public String greeting();
+}
+
+-----------------------------service proxy application prop------------------------------------
+server.port=8090
+restaurantapp.ribbon.listOfServers=localhost:9090
+spring.application.name = recruitmentapp
+
+-----------------------------------recruitment greeting application----------------------------
+package com.recruitment.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages= {"com.recruitment.controller"})
+public class RecruitmentGreetingApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RecruitmentGreetingApplication.class, args);
+	}
+
+}
+
+----------greeting controller-----------------------------
+package com.recruitment.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class GreetingController {
+
+	
+	@GetMapping(value="/welcome")
+	public @ResponseBody String greeting( ) {
+		
+		return "Employee Me Recruitment is a leading recruiter agency and a leading provider of jobs in India.";
+		
+	}
+}

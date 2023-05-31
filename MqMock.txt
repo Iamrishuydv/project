@@ -1,0 +1,99 @@
+FanoutExchange.java
+
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+/**
+ * Do not change Method Names
+ */
+public class FanoutExchange {
+public static void declareExchange() throws IOException, TimeoutException {
+//Add your code here
+    Channel channel = ConnectionMgr.getConnection().createChannel();
+    channel.exchangeDeclare("my-download-exchange", BuiltinExchangeType.FANOUT);
+}
+
+//Do not change method names
+public static void declareQueues() throws IOException, TimeoutException {
+//Add your code here
+    Channel channel = ConnectionMgr.getConnection().createChannel();
+    channel.queueDeclare("UserQ",false, false, false, null);
+    channel.queueDeclare("WebService01Q", false, false, false, null);
+    channel.queueDeclare("WebService02Q", false, false, false, null);
+}
+
+//Do not change method names
+public static void declareBindings() throws IOException, TimeoutException {
+//Add your code here
+    Channel channel = ConnectionMgr.getConnection().createChannel();
+    channel.queueBind("UserQ","my-download-exchange","");
+    channel.queueBind("WebService01Q","my-download-exchange","");
+    channel.queueBind("WebService02Q", "my-download-exchange" ,"");
+     
+  }
+  
+   //Do not change method names
+public static void subscribeMessage() throws IOException, TimeoutException {
+
+    Channel channel = ConnectionMgr.getConnection().createChannel();
+    channel.basicConsume("UserQ", true, null);
+    channel.basicConsume("WebService01Q", true, null);
+    channel.basicConsume("WebService02Q", true, null);
+}
+//Do not change method names
+public static void publishMessage() throws IOException, TimeoutException {
+
+    String message = "File_Uploaded";
+    Channel channel = ConnectionMgr.getConnection().createChannel();
+    channel.basicPublish ("my-download-exchange","",null,message.getBytes());
+}
+
+//Do not change method names
+public static void main(String[] args) throws IOException, TimeoutException {
+//Add your code here
+    declareExchange ();
+    declareQueues ();
+    declareBindings();
+        }
+}
+
+
+
+
+
+
+
+--------------------------------------------------------------
+
+
+ConnectionMgr.java
+
+
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class ConnectionMgr {
+  public static Connection connection = null;
+  public static ConnectionFactory factory = new ConnectionFactory();
+  //Do not change method names
+  public static Connection getConnection() throws IOException, TimeoutException{
+    
+    //Add your code here
+    factory.setHost("localhost");
+    factory.setPort(5672);
+    factory.setPassword("test");
+    factory.setUsername("test");
+    factory.setVirtualHost("qa1");
+    
+    connection = factory.newConnection();
+    return connection;
+  }
+}
